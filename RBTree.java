@@ -70,17 +70,86 @@ public class RBTree extends BinarySearchTree {
      * Step 3: color the root black.
      */
     @Override
-    public Node add(int value) {
-        // TODO (Exercise 2): implement red-black insertion.
-        // Hint: BinarySearchTree.add already does Step 1 and creates an RBNode.
-        //       You may add private helper methods (for example insertFixup).
-        throw new UnsupportedOperationException("Implement RB insertion");
+    public Node add(int value) 
+    {
+        Node insert = super.add(value);
+
+        if(insert == null)
+        {
+            return null;
+        }
+
+        Fix(insert);
+        setColor(root, BLACK);
+        return insert;
+    }
+
+    private void Fix(Node x)
+    {
+        while (isRed(x.parent))
+        {
+            Node y = x.parent;
+            Node h = y.parent;
+
+            if(y == h.left)
+            {
+                Node z = h.right;
+
+                if (isRed(z))
+                {
+                    setColor(y, BLACK);
+                    setColor(z, BLACK);
+                    setColor(h, RED);
+                    x = h;
+                } else
+                {
+                    if (x == y.right) 
+                    {
+                        x = y;
+                        rotateLeft(x);
+                        y = x.parent;
+                    }
+
+                    setColor(y, BLACK);
+                    setColor(h, RED);
+                    rotateRight(h);
+                }
+            } else 
+            {
+                Node z = h.left;
+
+                if(isRed(z))
+                {
+                    setColor(z, BLACK);
+                    setColor(y, BLACK);
+                    setColor(h, RED);
+                    x = h;
+                } else
+                {
+                    if (x == y.left)
+                    {
+                        x = y;
+                        rotateRight(x);
+                        y = x.parent;
+                    }
+                    setColor(y, BLACK);
+                    setColor(h, RED);
+                    rotateLeft(h);
+                }
+            }
+        }
     }
 
     /*
      * ======================== Exercise 2, Part B — Analysis ========================
-     *
-     *
+     * Q1. Rotations only occurs in Case 2 and 3 and Case 3 will always end the loop, 
+     * which should only take maximum of 2 rotations. Case 1 is there for only recolors but it
+     * will move x up to two levels and also it can repeat, so basically O(h) = O(log n) for recolorings.
+     * 
+     * Q2. O(log n). The BST insert will follow one path which (O(h)) and Fix should run 
+     * at max h/2 iterations with O(1) working each. So the total should be 
+     * O(h) = O(2 log2(n + 1)) = O(log n).
+     * 
      * ===============================================================================
      */
 

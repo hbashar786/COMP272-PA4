@@ -127,17 +127,36 @@ public class AVLTree extends BinarySearchTree {
 
     @Override
     public boolean delete(int value) {
-        // TODO (Exercise 1): AVL deletion also requires rebalancing.
-        // Remove value as in a BST, then restore the AVL balance condition
-        // on every node from the right starting point up to the root.
-        throw new UnsupportedOperationException(
-            "Implement AVL deletion with rebalancing"
-        );
+
+        Node target = findNode(value);
+
+        if(target == null)
+        {
+            return false;
+        }
+
+        Node remove = (target.left != null && target.right != null)
+
+                ? minimum(target.right)
+                : target;
+
+        Node Start = remove.parent;
+
+        super.delete(value);
+        rebalanceUpward(Start);
+
+        return true;
     }
 
     /*
      * ======================== Exercise 1, Part B — Analysis ========================
-     *
+     * 
+     * Q1. The worst case running time of delete would be O(log n) because to find the node
+     * and it's successor they both will follow a downward path which is (O(h)), and to remove it 
+     * changes O(1) times and for reblance at most h ancestors will be doing O(1) work each with 
+     * (updateheight + rotation), So the total is O(h) = O(log n).
+     * 
+     * Q2. 
      *
      * ===============================================================================
      */
